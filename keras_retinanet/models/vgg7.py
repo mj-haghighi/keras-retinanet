@@ -17,7 +17,7 @@ limitations under the License.
 
 from tensorflow import keras
 
-from . import retinanet
+from . import saffronnet
 from . import Backbone
 from ..utils.image import preprocess_image
 
@@ -93,10 +93,11 @@ def vgg_retinanet(num_classes, backbone='vgg7', inputs=None, modifier=None, **kw
         vgg = modifier(vgg)
 
     # create the full model
-    layer_names = ["backbone_output"]
+    layer_names = [output_layer_name]
     layer_outputs = [vgg.get_layer(name).output for name in layer_names]
 
     # C2, C3, C4, C5 not provided
     backbone_output = layer_outputs[0]
-
-    return retinanet.retinanet_without_pyramids(inputs=inputs, num_classes=num_classes, backbone_output=backbone_output, **kwargs)
+    
+    full_model = saffronnet.saffronnet(inputs=inputs, num_classes=num_classes, backbone_output=backbone_output, **kwargs) 
+    return full_model
