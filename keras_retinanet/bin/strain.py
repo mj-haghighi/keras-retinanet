@@ -315,6 +315,7 @@ def create_generators(args, preprocess_image):
         train_generator = SCSVGenerator(
             args.annotations,
             args.classes,
+            base_dir=args.main_dir
             transform_generator=transform_generator,
             visual_effect_generator=visual_effect_generator,
             **common_args
@@ -324,6 +325,7 @@ def create_generators(args, preprocess_image):
             validation_generator = SCSVGenerator(
                 args.val_annotations,
                 args.classes,
+                base_dir=args.main_dir
                 shuffle_groups=False,
                 **common_args
             )
