@@ -59,6 +59,8 @@ def backbone(backbone_name):
         from .mobilenet import MobileNetBackbone as b
     elif 'vgg' in backbone_name:
         from .vgg import VGGBackbone as b
+    elif 'vgg7' in backbone_name:
+        from .vgg7 import VGG7Backbone as b
     elif 'EfficientNet' in backbone_name:
         from .effnet import EfficientNetBackbone as b
     else:
