@@ -304,12 +304,12 @@ def generate_anchors(alpha_segments=None):
     if alpha_segments is None:
         alpha_segments = AnchorParameters.default.alpha_segments
 
-    num_anchors = AnchorParameters.num_anchors()
+    num_anchors = len(alpha_segments)
 
     # initialize output anchors
     anchors = np.zeros((num_anchors, 3))
     # set alphas to anchors
-    anchors[:, 2] = AnchorParameters.alpha_segments
+    anchors[:, 2] = alpha_segments
     
     return anchors
 
