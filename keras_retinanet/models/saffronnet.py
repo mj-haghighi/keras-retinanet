@@ -149,6 +149,34 @@ def default_submodels(num_values, num_classes, num_anchors, backbone_feature_siz
         'classification': default_classification_model(num_classes, num_anchors, backbone_feature_size)
     }
 
+def __build_anchors(anchor_parameters):
+    """ Builds anchors for the shape of the features from FPN.
+
+    Args
+        anchor_parameters : Parameteres that determine how anchors are generated.
+        features          : The FPN features.
+
+    Returns
+        A tensor containing the anchors for the FPN features.
+
+        The shape is:
+        ```
+        (batch_size, num_anchors, 4)
+        ```
+    """
+    anchors = [
+        layers.Anchors(
+            size=anchor_parameters.sizes[i],
+            stride=anchor_parameters.strides[i],
+            ratios=anchor_parameters.ratios,
+            scales=anchor_parameters.scales,
+            name='anchors_{}'.format(i)
+        )(f) for i, f in enumerate(features)
+    ]
+
+    return keras.layers.Concatenate(axis=1, name='anchors')(anchors)
+
+
 
 def saffronnet(
     inputs,
@@ -204,13 +232,12 @@ def saffronnet(
     return keras.models.Model(inputs=inputs, outputs=[regression, classifcation], name=name)
 
 
-def retinanet_bbox(
+def saffronnet_center_alpha(
     model                 = None,
     nms                   = True,
     class_specific_filter = True,
-    name                  = 'retinanet-bbox',
+    name                  = 'saffronnet-center-alpha',
     anchor_params         = None,
-    pyramid_levels        = None,
     nms_threshold         = 0.5,
     score_threshold       = 0.05,
     max_detections        = 300,
@@ -252,21 +279,11 @@ def retinanet_bbox(
 
     # create RetinaNet model
     if model is None:
-        model = retinanet(num_anchors=anchor_params.num_anchors(), **kwargs)
+        model = saffronnet(num_anchors=anchor_params.num_anchors(), **kwargs)
     else:
         assert_training_model(model)
 
-    if pyramid_levels is None:
-        pyramid_levels = [3, 4, 5, 6, 7]
-
-    assert len(pyramid_levels) == len(anchor_params.sizes), \
-        "number of pyramid levels {} should match number of anchor parameter sizes {}".format(len(pyramid_levels),
-                                                                                              len(anchor_params.sizes))
-
-    pyramid_layer_names = ['P{}'.format(p) for p in pyramid_levels]
-    # compute the anchors
-    features = [model.get_layer(p_name).output for p_name in pyramid_layer_names]
-    anchors  = __build_anchors(anchor_params, features)
+    anchors  = __build_anchors(anchor_params)
 
     # we expect the anchors, regression and classification values as first output
     regression     = model.outputs[0]
