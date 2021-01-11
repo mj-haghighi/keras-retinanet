@@ -13,13 +13,13 @@ def collect_all_anotations(
     class_name,
     anot_ext = 'csv',
     image_ext ='jpg',
-    split_path_char = '\\'
+    split_path_char = '/'
 ):
 
     
     anots_paths = sorted(glob.glob(os.path.join(base_dir, anots_regx)))
     
-    with open(out_path, mode='w', newline='') as out_csv_file:
+    with open(out_path, mode='w+', newline='') as out_csv_file:
         writer = csv.writer(out_csv_file)
         for path in anots_paths:
             file_name = path.split(split_path_char)[-1]
@@ -33,8 +33,8 @@ def collect_all_anotations(
 
 if __name__ == "__main__":
     collect_all_anotations(
-        base_dir = 'Dateset\\Train',
+        base_dir = 'Dataset/Train',
         anots_regx='*.csv',
-        out_path = 'Dateset\\anots.csv',
+        out_path = 'Dataset/anots.csv',
         class_name = 'saffron'
     )
