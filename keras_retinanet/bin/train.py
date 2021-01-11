@@ -38,6 +38,7 @@ from ..callbacks import RedirectModel
 from ..callbacks.eval import Evaluate
 from ..models.retinanet import retinanet_bbox
 from ..preprocessing.csv_generator import CSVGenerator
+from ..preprocessing.scsv_generator import SCSVGenerator
 from ..preprocessing.kitti import KittiGenerator
 from ..preprocessing.open_images import OpenImagesGenerator
 from ..preprocessing.pascal_voc import PascalVocGenerator
@@ -305,6 +306,24 @@ def create_generators(args, preprocess_image):
 
         if args.val_annotations:
             validation_generator = CSVGenerator(
+                args.val_annotations,
+                args.classes,
+                shuffle_groups=False,
+                **common_args
+            )
+        else:
+            validation_generator = None
+    elif args.dataset_type == 'scsv':
+        train_generator = SCSVGenerator(
+            args.annotations,
+            args.classes,
+            transform_generator=transform_generator,
+            visual_effect_generator=visual_effect_generator,
+            **common_args
+        )
+
+        if args.val_annotations:
+            validation_generator = SCSVGenerator(
                 args.val_annotations,
                 args.classes,
                 shuffle_groups=False,
