@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .generator import Generator
+from .sgenerator import Generator
 from ..utils.image import read_image_bgr
 
 import numpy as np
@@ -244,67 +244,3 @@ class SCSVGenerator(Generator):
                     annotations_group[index][k] = np.delete(annotations[k], invalid_indices, axis=0)
         return image_group, annotations_group
 
-    # OVERRIDED on generator`s one
-    def preprocess_group_entry(self, image, annotations):
-        """ Preprocess image and its annotations.
-        """
-        # resize image
-        image, image_scale = self.resize_image(image)
-
-        # preprocess the image
-        image = self.preprocess_image(image)
-
-        # apply resizing to annotations too. NOTE: third parameter is alpha, don`t touch it :) 
-        annotations['center_alpha'][:, :2] *= image_scale
-
-        # convert to the wanted keras floatx
-        image = keras.backend.cast_to_floatx(image)
-
-        return image, annotations
-
-    # OVERRIDED on generator`s one
-    def compute_targets(self, image_group, annotations_group):
-        """ Compute target outputs for the network using images and their annotations.
-        """
-        # get the max image shape
-        max_shape = tuple(max(image.shape[x] for image in image_group) for x in range(3))
-        anchors   = self.generate_anchors(max_shape)
-
-        batches = self.compute_anchor_targets(
-            anchors,
-            image_group,
-            annotations_group,
-            self.num_classes()
-        )
-
-        return list(batches)
-
-
-
-    # OVERRIDED on generator`s one
-    def compute_input_output(self, group):
-        """ Compute inputs and target outputs for the network.
-        """
-        # load images and annotations
-        image_group       = self.load_image_group(group)
-        annotations_group = self.load_annotations_group(group)
-
-        # check validity of annotations
-        image_group, annotations_group = self.filter_annotations(image_group, annotations_group, group)
-
-        # randomly apply visual effect
-        image_group, annotations_group = self.random_visual_effect_group(image_group, annotations_group)
-
-        # randomly transform data, NOTE: bikhial for now :)
-        # image_group, annotations_group = self.random_transform_group(image_group, annotations_group)
-
-        # perform preprocessing steps
-        image_group, annotations_group = self.preprocess_group(image_group, annotations_group)
-
-        # compute network inputs
-        inputs = self.compute_inputs(image_group)
-
-        # compute network targets
-        targets = self.compute_targets(image_group, annotations_group)
-
-        return inputs, targets

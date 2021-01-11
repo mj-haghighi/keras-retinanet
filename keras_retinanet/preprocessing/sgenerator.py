@@ -262,7 +262,7 @@ class Generator(keras.utils.Sequence):
         image = self.preprocess_image(image)
 
         # apply resizing to annotations too
-        annotations['center_alpha'] *= image_scale
+        annotations['center_alpha'][:, :2] *= image_scale
 
         # convert to the wanted keras floatx
         image = keras.backend.cast_to_floatx(image)
@@ -313,7 +313,6 @@ class Generator(keras.utils.Sequence):
 
     def generate_anchors(self, image_shape):
         anchor_params = None
-        pyramid_levels = None
         if self.config and 'anchor_parameters' in self.config:
             anchor_params = parse_anchor_parameters(self.config)
         
@@ -349,7 +348,7 @@ class Generator(keras.utils.Sequence):
         image_group, annotations_group = self.random_visual_effect_group(image_group, annotations_group)
 
         # randomly transform data
-        image_group, annotations_group = self.random_transform_group(image_group, annotations_group)
+        # image_group, annotations_group = self.random_transform_group(image_group, annotations_group)
 
         # perform preprocessing steps
         image_group, annotations_group = self.preprocess_group(image_group, annotations_group)
