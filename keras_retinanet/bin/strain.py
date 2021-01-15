@@ -437,6 +437,11 @@ def parse_args(args):
     csv_parser.add_argument('annotations', help='Path to CSV file containing annotations for training.')
     csv_parser.add_argument('classes', help='Path to a CSV file containing class label mapping.')
     csv_parser.add_argument('--val-annotations', help='Path to CSV file containing annotations for validation (optional).')
+    
+    scsv_parser = subparsers.add_parser('scsv')
+    scsv_parser.add_argument('annotations', help='Path to CSV file containing annotations for training.')
+    scsv_parser.add_argument('classes', help='Path to a CSV file containing class label mapping.')
+    scsv_parser.add_argument('--val-annotations', help='Path to CSV file containing annotations for validation (optional).')
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--snapshot',          help='Resume training from a snapshot.')
