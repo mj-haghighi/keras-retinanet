@@ -39,6 +39,7 @@ if __name__ == "__main__" and __package__ is None:
 # Change these to absolute imports if you copy this script outside the keras_retinanet package.
 from ..preprocessing.pascal_voc import PascalVocGenerator
 from ..preprocessing.csv_generator import CSVGenerator
+from ..preprocessing.scsv_generator import SCSVGenerator
 from ..preprocessing.kitti import KittiGenerator
 from ..preprocessing.open_images import OpenImagesGenerator
 from ..utils.anchors import anchors_for_shape, compute_gt_annotations
@@ -105,6 +106,14 @@ def create_generator(args):
         )
     elif args.dataset_type == 'csv':
         generator = CSVGenerator(
+            args.annotations,
+            args.classes,
+            transform_generator=transform_generator,
+            visual_effect_generator=visual_effect_generator,
+            **common_args
+        )
+    elif args.dataset_type == 'scsv':
+        generator = SCSVGenerator(
             args.annotations,
             args.classes,
             transform_generator=transform_generator,
