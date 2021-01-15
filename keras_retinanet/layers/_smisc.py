@@ -36,9 +36,9 @@ class Anchors(keras.layers.Layer):
         self.alpha_segments = alpha_segments
         self.stride = stride
 
-        if self.alpha_segments = None:
+        if self.alpha_segments == None:
             self.alpha_segments = utils_anchors.AnchorParameters.default.alpha_segments
-        if self.stride = None:
+        if self.stride == None:
             self.stride = utils_anchors.AnchorParameters.default.strides[0]
 
         self.num_base_anchors = len(self.alpha_segments)
