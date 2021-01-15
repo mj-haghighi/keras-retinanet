@@ -122,7 +122,7 @@ def default_regression_model(
             **options
         )(outputs)
 
-    outputs = keras.layers.Conv2D(num_anchors * num_values, name='regression', **options)(outputs)
+    outputs = keras.layers.Conv2D(num_anchors * num_values, name='regression_orginal', **options)(outputs)
     if keras.backend.image_data_format() == 'channels_first':
         outputs = keras.layers.Permute((2, 3, 1), name='regression_permute')(outputs)
     outputs = keras.layers.Reshape((-1, num_values), name='regression_reshape')(outputs)
@@ -149,32 +149,24 @@ def default_submodels(num_values, num_classes, num_anchors, backbone_feature_siz
         'classification': default_classification_model(num_classes, num_anchors, backbone_feature_size)
     }
 
-def __build_anchors(anchor_parameters):
+def __build_anchors(anchor_parameters, on_layer):
     """ Builds anchors for the shape of the features from FPN.
 
     Args
         anchor_parameters : Parameteres that determine how anchors are generated.
-        features          : The FPN features.
-
+        on_layer: keras(model) layer that you ant build anchors on it(build anchors according to this layer shape)
     Returns
         A tensor containing the anchors for the FPN features.
-
         The shape is:
         ```
-        (batch_size, num_anchors, 4)
+        (batch_size, num_anchors, 3)
         ```
     """
-    anchors = [
-        layers.Anchors(
-            size=anchor_parameters.sizes[i],
-            stride=anchor_parameters.strides[i],
-            ratios=anchor_parameters.ratios,
-            scales=anchor_parameters.scales,
-            name='anchors_{}'.format(i)
-        )(f) for i, f in enumerate(features)
-    ]
-
-    return keras.layers.Concatenate(axis=1, name='anchors')(anchors)
+    anchors = layers.Anchors(
+                stride=anchor_parameters.strides[i],
+                name='anchors'
+            )(on_layer)
+    return anchors
 
 
 
@@ -283,11 +275,14 @@ def saffronnet_center_alpha(
     else:
         assert_training_model(model)
 
-    anchors  = __build_anchors(anchor_params)
-
+    # last layer of regression submodel before Reshape
+    regression_orginal = model.get_layer('regression_submodel').get_layer('regression_orginal')
+    
     # we expect the anchors, regression and classification values as first output
     regression     = model.outputs[0]
     classification = model.outputs[1]
+
+    anchors  = __build_anchors(anchor_params, on_layer=regression_orginal)
 
     # "other" can be any additional output from custom submodels, by default this will be []
     other = model.outputs[2:]
