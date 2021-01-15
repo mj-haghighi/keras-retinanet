@@ -56,6 +56,7 @@ setuptools.setup(
     install_requires = ['keras-resnet==0.2.0', 'six', 'numpy', 'cython', 'Pillow', 'opencv-python', 'progressbar2'],
     entry_points     = {
         'console_scripts': [
+            'saffronnet-train=keras_retinanet.bin.strain:main',
             'retinanet-train=keras_retinanet.bin.train:main',
             'retinanet-evaluate=keras_retinanet.bin.evaluate:main',
             'retinanet-debug=keras_retinanet.bin.debug:main',
