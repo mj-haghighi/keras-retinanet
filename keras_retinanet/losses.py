@@ -83,36 +83,52 @@ def smooth_l1(sigma=3.0):
         """ Compute the smooth L1 loss of y_pred w.r.t. y_true.
 
         Args
-            y_true: Tensor from the generator of shape (B, N, 5). The last value for each box is the state of the anchor (ignore, negative, positive).
-            y_pred: Tensor from the network of shape (B, N, 4).
+            y_true: Tensor from the generator of shape (B, N, 4). The last value for each box is the state of the anchor (ignore, negative, positive).
+            y_pred: Tensor from the network of shape (B, N, 3).
 
         Returns
             The smooth L1 loss of y_pred w.r.t. y_true.
         """
         # separate target and state
-        regression        = y_pred
-        regression_target = y_true[:, :, :-1]
+        xy_regression        = y_pred[:, :, :2]
+        xy_regression_target = y_true[:, :, :2]
+        
+        # separate target and state
+        alpha_regression        = y_pred[:, :, 2]
+        alpha_regression_target = y_true[:, :, 2]
+        
         anchor_state      = y_true[:, :, -1]
 
         # filter out "ignore" anchors
         indices           = tensorflow.where(keras.backend.equal(anchor_state, 1))
-        regression        = tensorflow.gather_nd(regression, indices)
-        regression_target = tensorflow.gather_nd(regression_target, indices)
+        xy_regression        = tensorflow.gather_nd(xy_regression, indices)
+        xy_regression_target = tensorflow.gather_nd(xy_regression_target, indices)
+        
+        alpha_regression       = tensorflow.gather_nd(alpha_regression, indices)
+        alpha_regression_target = tensorflow.gather_nd(alpha_regression_target, indices)
 
         # compute smooth L1 loss
         # f(x) = 0.5 * (sigma * x)^2          if |x| < 1 / sigma / sigma
         #        |x| - 0.5 / sigma / sigma    otherwise
-        regression_diff = regression - regression_target
-        regression_diff = keras.backend.abs(regression_diff)
-        regression_loss = tensorflow.where(
-            keras.backend.less(regression_diff, 1.0 / sigma_squared),
-            0.5 * sigma_squared * keras.backend.pow(regression_diff, 2),
-            regression_diff - 0.5 / sigma_squared
+        xy_regression_diff = xy_regression - xy_regression_target
+        xy_regression_diff = keras.backend.abs(xy_regression_diff)
+        
+        xy_regression_loss = tensorflow.where(
+            keras.backend.less(xy_regression_diff, 1.0 / sigma_squared),
+            0.5 * sigma_squared * keras.backend.pow(xy_regression_diff, 2),
+            xy_regression_diff - 0.5 / sigma_squared
         )
+
+        # regression_loss_dpi
+        ones = keras.backend.ones_like(alpha_regression)
+        alpha_regression_loss = ones - keras.backend.cos((alpha_regression_target - alpha_regression) * (3.1415 / 180.0))
 
         # compute the normalizer: the number of positive anchors
         normalizer = keras.backend.maximum(1, keras.backend.shape(indices)[0])
         normalizer = keras.backend.cast(normalizer, dtype=keras.backend.floatx())
-        return keras.backend.sum(regression_loss) / normalizer
+        
+        normalized_loss = (keras.backend.sum(xy_regression_loss) + keras.backend.sum(alpha_regression_loss)) / normalizer
+
+        return normalized_loss
 
     return _smooth_l1
