@@ -26,7 +26,7 @@ class Anchors(keras.layers.Layer):
     """ Keras layer for generating achors for a given shape.
     """
 
-    def __init__(self, strides, alpha_segments, *args, **kwargs):
+    def __init__(self, stride, alpha_segments, *args, **kwargs):
         """ Initializer for an Anchors layer.
 
         Args
@@ -34,48 +34,47 @@ class Anchors(keras.layers.Layer):
             strides         : The stride of the anchors to generate.
         """
         self.alpha_segments = alpha_segments
-        self.strides = strides
+        self.stride = stride
 
         if self.alpha_segments = None:
             self.alpha_segments = utils_anchors.AnchorParameters.default.alpha_segments
-        if self.strides = None:
-            self.strides = utils_anchors.AnchorParameters.default.alpha_segments
+        if self.stride = None:
+            self.stride = utils_anchors.AnchorParameters.default.strides[0]
 
-        self.num_anchors = len(self.alpha_segments)
-        self.anchors = utils_anchors.generate_anchors(
+        self.num_base_anchors = len(self.alpha_segments)
+        self.base_anchors = utils_anchors.generate_anchors(
             alpha_segments=self.alpha_segments
         ).astype(np.float32)
 
         super(Anchors, self).__init__(*args, **kwargs)
 
     def call(self, inputs, **kwargs):
-        features = inputs
-        features_shape = keras.backend.shape(features)
-
+        input_shape = keras.backend.shape(inputs)
         # generate proposals from bbox deltas and shifted anchors
         if keras.backend.image_data_format() == 'channels_first':
-            anchors = backend.shift(features_shape[2:4], self.stride, self.anchors)
+            anchors = utils_anchors.shift(input_shape[2:4], self.stride, self.base_anchors)
         else:
-            anchors = backend.shift(features_shape[1:3], self.stride, self.anchors)
-        anchors = keras.backend.tile(keras.backend.expand_dims(anchors, axis=0), (features_shape[0], 1, 1))
-
+            anchors = utils_anchors.shift(input_shape[1:3], self.stride, self.base_anchors)
+        anchors = keras.backend.tile(keras.backend.expand_dims(anchors, axis=0), (input_shape[0], 1, 1))
+        
         return anchors
+
 
     def compute_output_shape(self, input_shape):
         if None not in input_shape[1:]:
             if keras.backend.image_data_format() == 'channels_first':
-                total = np.prod(input_shape[2:4]) * self.num_anchors
+                total = np.prod(input_shape[2:4]) * self.num_base_anchors
             else:
-                total = np.prod(input_shape[1:3]) * self.num_anchors
+                total = np.prod(input_shape[1:3]) * self.num_base_anchors
 
-            return (input_shape[0], total, 4)
+            return (input_shape[0], total, 3)
         else:
-            return (input_shape[0], None, 4)
+            return (input_shape[0], None, 3)
 
     def get_config(self):
         config = super(Anchors, self).get_config()
         config.update({
-            'strides' : self.strides,
+            'stride' : self.stride,
             'alpha_segments': self.alpha_segments
         })
 
@@ -136,7 +135,7 @@ class RegressBoxes(keras.layers.Layer):
 
     def call(self, inputs, **kwargs):
         anchors, regression = inputs
-        return backend.bbox_transform_inv(anchors, regression, mean=self.mean, std=self.std)
+        return backend.center_alpha_transform_inv(anchors, regression, mean=self.mean, std=self.std)
 
     def compute_output_shape(self, input_shape):
         return input_shape[0]
@@ -162,11 +161,12 @@ class ClipBoxes(keras.layers.Layer):
         else:
             _, height, width, _ = tensorflow.unstack(shape, axis=0)
 
-        x1, y1, x2, y2 = tensorflow.unstack(boxes, axis=-1)
-        x1 = tensorflow.clip_by_value(x1, 0, width  - 1)
-        y1 = tensorflow.clip_by_value(y1, 0, height - 1)
-        x2 = tensorflow.clip_by_value(x2, 0, width  - 1)
-        y2 = tensorflow.clip_by_value(y2, 0, height - 1)
+        x, y, alpha = tensorflow.unstack(boxes, axis=-1)
+        
+        x = tensorflow.clip_by_value(x, 0, width  - 1)
+        y = tensorflow.clip_by_value(y, 0, height  - 1)
+        alpha = tensorflow.clip_by_value(alpha, 0, 360)
+        
 
         return keras.backend.stack([x1, y1, x2, y2], axis=2)
 
