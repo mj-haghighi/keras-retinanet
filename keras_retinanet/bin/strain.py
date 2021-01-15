@@ -325,7 +325,7 @@ def create_generators(args, preprocess_image):
             validation_generator = SCSVGenerator(
                 args.val_annotations,
                 args.classes,
-                base_dir=args.main_dir
+                base_dir=args.main_dir,
                 shuffle_groups=False,
                 **common_args
             )
