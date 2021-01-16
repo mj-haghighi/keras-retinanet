@@ -36,9 +36,9 @@ class AnchorParameters:
 
 
 def get_alpha_segments(num_segs = 8):
-    a = 360
+    a = 360.0
     unit = a / num_segs
-    center = unit / 2
+    center = unit / 2.0
     return [(unit * i) + center for i in range(num_segs)]
 
 """
