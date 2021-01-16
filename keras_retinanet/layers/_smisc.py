@@ -52,9 +52,9 @@ class Anchors(keras.layers.Layer):
         input_shape = keras.backend.shape(inputs)
         # generate proposals from bbox deltas and shifted anchors
         if keras.backend.image_data_format() == 'channels_first':
-            anchors = utils_anchors.shift(input_shape[2:4], self.stride, self.base_anchors)
+            anchors = backend.shift(input_shape[2:4], self.stride, self.base_anchors)
         else:
-            anchors = utils_anchors.shift(input_shape[1:3], self.stride, self.base_anchors)
+            anchors = backend.shift(input_shape[1:3], self.stride, self.base_anchors)
         anchors = keras.backend.tile(keras.backend.expand_dims(anchors, axis=0), (input_shape[0], 1, 1))
         
         return anchors
