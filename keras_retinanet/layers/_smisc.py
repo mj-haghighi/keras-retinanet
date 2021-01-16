@@ -168,7 +168,7 @@ class ClipBoxes(keras.layers.Layer):
         alpha = tensorflow.clip_by_value(alpha, 0, 360)
         
 
-        return keras.backend.stack([x1, y1, x2, y2], axis=2)
+        return keras.backend.stack([x, y, alpha], axis=2)
 
     def compute_output_shape(self, input_shape):
         return input_shape[1]
