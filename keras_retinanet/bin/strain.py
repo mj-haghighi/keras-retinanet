@@ -315,7 +315,7 @@ def create_generators(args, preprocess_image):
         train_generator = SCSVGenerator(
             args.annotations,
             args.classes,
-            base_dir=args.main_dir,
+            base_dir=args.base_dir,
             transform_generator=transform_generator,
             visual_effect_generator=visual_effect_generator,
             **common_args
@@ -325,7 +325,7 @@ def create_generators(args, preprocess_image):
             validation_generator = SCSVGenerator(
                 args.val_annotations,
                 args.classes,
-                base_dir=args.main_dir,
+                base_dir=args.base_dir,
                 shuffle_groups=False,
                 **common_args
             )
@@ -439,6 +439,7 @@ def parse_args(args):
     csv_parser.add_argument('--val-annotations', help='Path to CSV file containing annotations for validation (optional).')
     
     scsv_parser = subparsers.add_parser('scsv')
+    scsv_parser.add_argument('base_dir', help="Path to train image folder")
     scsv_parser.add_argument('annotations', help='Path to CSV file containing annotations for training.')
     scsv_parser.add_argument('classes', help='Path to a CSV file containing class label mapping.')
     scsv_parser.add_argument('--val-annotations', help='Path to CSV file containing annotations for validation (optional).')
