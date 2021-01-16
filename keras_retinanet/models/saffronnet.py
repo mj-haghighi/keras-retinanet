@@ -166,6 +166,7 @@ def __build_anchors(anchor_parameters, on_layer):
     """
     anchors = layers.Anchors(
                 stride=anchor_parameters.strides[0],
+                alpha_segments=anchor_parameters.alpha_segments,
                 name='anchors'
             )(on_layer)
     return anchors
