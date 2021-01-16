@@ -75,7 +75,8 @@ def default_classification_model(
         outputs = keras.layers.Permute((2, 3, 1), name='classification_permute')(outputs)
     outputs = keras.layers.Reshape((-1, num_classes), name='classification_reshape')(outputs)
     outputs = keras.layers.Activation('sigmoid', name='classification_sigmoid')(outputs)
-
+    
+    print("Classification submodel is placed in backbone")
     return keras.models.Model(inputs=inputs, outputs=outputs, name=name)
 
 
@@ -126,7 +127,8 @@ def default_regression_model(
     if keras.backend.image_data_format() == 'channels_first':
         outputs = keras.layers.Permute((2, 3, 1), name='regression_permute')(outputs)
     outputs = keras.layers.Reshape((-1, num_values), name='regression_reshape')(outputs)
-
+    
+    print("Regression submodel is placed in backbone")
     return keras.models.Model(inputs=inputs, outputs=outputs, name=name)
 
 
