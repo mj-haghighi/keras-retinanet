@@ -17,7 +17,7 @@ limitations under the License.
 from tensorflow import keras
 from .. import initializers
 from .. import layers
-from ..utils.anchors import AnchorParameters
+from ..utils.center_alpha_anchors import AnchorParameters
 from . import assert_training_model
 
 
@@ -165,7 +165,7 @@ def __build_anchors(anchor_parameters, on_layer):
         ```
     """
     anchors = layers.Anchors(
-                stride=anchor_parameters.strides[i],
+                stride=anchor_parameters.strides[0],
                 name='anchors'
             )(on_layer)
     return anchors
