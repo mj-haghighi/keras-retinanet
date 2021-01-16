@@ -87,7 +87,7 @@ def vgg_retinanet(num_classes, backbone='vgg7', inputs=None, modifier=None, **kw
     # create the vgg backbone
     output_layer_name = "backbone_output"
     if backbone == 'vgg7':
-        vgg16 = keras.applications.VGG16(input_tensor=inputs, include_top=False, weights=None)
+        vgg16 = keras.applications.vgg16(input_tensor=inputs, include_top=False, weights=None)
         outputs = keras.layers.MaxPool2D(name=output_layer_name)(vgg16.layers[8].output)
         vgg = keras.Model(inputs=vgg16.inputs, outputs=outputs)
     else:
