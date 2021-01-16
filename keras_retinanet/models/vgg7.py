@@ -28,7 +28,7 @@ class VGG7Backbone(Backbone):
         Note: MaxPooling layers are not counted :/
     """
     def __init__(self, backbone):
-        super()__init__(backbone)
+        super().__init__(backbone)
         print('Use VGG7 as backbone')
 
 
