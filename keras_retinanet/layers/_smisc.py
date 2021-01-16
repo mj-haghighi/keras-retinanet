@@ -49,7 +49,6 @@ class Anchors(keras.layers.Layer):
         super(Anchors, self).__init__(*args, **kwargs)
 
     def call(self, inputs, **kwargs):
-        print('Anchors: input layer: ', inputs)
         input_shape = keras.backend.shape(inputs)
         # generate proposals from bbox deltas and shifted anchors
         if keras.backend.image_data_format() == 'channels_first':

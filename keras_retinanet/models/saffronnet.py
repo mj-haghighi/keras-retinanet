@@ -285,7 +285,7 @@ def saffronnet_center_alpha(
     regression     = model.outputs[0]
     classification = model.outputs[1]
 
-    anchors  = __build_anchors(anchor_params, on_layer=regression_orginal)
+    anchors  = __build_anchors(anchor_params, on_layer=regression_orginal.output)
 
     # "other" can be any additional output from custom submodels, by default this will be []
     other = model.outputs[2:]
