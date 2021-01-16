@@ -27,6 +27,10 @@ class VGG7Backbone(Backbone):
         VGG7 is the first seven layers of VGG16 with MaxPooling2D at the end :)
         Note: MaxPooling layers are not counted :/
     """
+    def __init__(self, backbone):
+        super()__init__(backbone)
+        print('Use VGG7 as backbone')
+
 
     def retinanet(self, *args, **kwargs):
         """ Returns a retinanet model using the correct backbone.

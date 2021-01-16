@@ -98,7 +98,6 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
     # load anchor parameters, or pass None (so that defaults will be used)
     anchor_params = None
     num_anchors   = None
-    pyramid_levels = None
     if config and 'anchor_parameters' in config:
         anchor_params = parse_anchor_parameters(config)
         num_anchors   = anchor_params.num_anchors()
