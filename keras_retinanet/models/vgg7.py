@@ -42,7 +42,7 @@ class VGG7Backbone(Backbone):
         Weights can be downloaded at https://github.com/fizyr/keras-models/releases .
         """
         if self.backbone == 'vgg7':
-            resource = keras.applications.vgg16.vgg16.WEIGHTS_PATH_NO_TOP
+            resource = keras.applications.vgg16.WEIGHTS_PATH_NO_TOP
             checksum = '6d6bbae143d832006294945121d1f1fc'
         else:
             raise ValueError("Backbone '{}' not recognized.".format(self.backbone))
@@ -87,7 +87,7 @@ def vgg_retinanet(num_classes, backbone='vgg7', inputs=None, modifier=None, **kw
     # create the vgg backbone
     output_layer_name = "backbone_output"
     if backbone == 'vgg7':
-        vgg16 = keras.applications.vgg16(input_tensor=inputs, include_top=False, weights=None)
+        vgg16 = keras.applications.VGG16(input_tensor=inputs, include_top=False, weights=None)
         outputs = keras.layers.MaxPool2D(name=output_layer_name)(vgg16.layers[8].output)
         vgg = keras.Model(inputs=vgg16.inputs, outputs=outputs)
     else:
