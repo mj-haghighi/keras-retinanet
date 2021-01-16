@@ -27,7 +27,7 @@ def default_classification_model(
     backbone_feature_size=256,
     prior_probability=0.01,
     classification_feature_size=256,
-    name='classification_submodel'
+    name='classification'
 ):
     """ Creates the default classification submodel.
 
@@ -85,7 +85,7 @@ def default_regression_model(
     num_anchors,
     backbone_feature_size=256,
     regression_feature_size=256,
-    name='regression_submodel'
+    name='regression'
     ):
     """ Creates the default regression submodel.
 
@@ -278,7 +278,7 @@ def saffronnet_center_alpha(
         assert_training_model(model)
 
     # last layer of regression submodel before Reshape
-    regression_orginal = model.get_layer('regression_submodel').get_layer('regression_orginal')
+    regression_orginal = model.get_layer('regression').get_layer('regression_orginal')
     
     # we expect the anchors, regression and classification values as first output
     regression     = model.outputs[0]
