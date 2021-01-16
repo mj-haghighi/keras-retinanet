@@ -218,8 +218,8 @@ def saffronnet(
             num_anchors             = num_anchors,
             backbone_feature_size   = backbone_feature_size)
         
-        regression = backbone_output(submodel['regression']) 
-        classification = backbone_output(submodel['classification']) 
+        regression = backbone_output(submodels['regression']) 
+        classification = backbone_output(submodels['classification']) 
 
     return keras.models.Model(inputs=inputs, outputs=[regression, classifcation], name=name)
 
