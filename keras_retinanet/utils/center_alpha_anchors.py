@@ -280,7 +280,7 @@ def shift(shape, stride, anchors):
 
     shifts = np.vstack((
         shift_x.ravel(), shift_y.ravel(),
-        shift_x.ravel(), shift_y.ravel()
+        np.zeros_like(shift_y).ravel()
     )).transpose()
 
     # add A anchors (1, A, 3) to

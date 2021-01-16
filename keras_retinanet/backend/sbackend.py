@@ -66,8 +66,7 @@ def shift(shape, stride, anchors):
     shifts = keras.backend.stack([
         shift_x,
         shift_y,
-        shift_x,
-        shift_y
+        keras.backend.zeros_like(shift_y)
     ], axis=0)
 
     shifts            = keras.backend.transpose(shifts)
@@ -75,8 +74,8 @@ def shift(shape, stride, anchors):
 
     k = keras.backend.shape(shifts)[0]  # number of base points = feat_h * feat_w
 
-    shifted_anchors = keras.backend.reshape(anchors, [1, number_of_anchors, 4]) + keras.backend.cast(keras.backend.reshape(shifts, [k, 1, 4]), keras.backend.floatx())
-    shifted_anchors = keras.backend.reshape(shifted_anchors, [k * number_of_anchors, 4])
+    shifted_anchors = keras.backend.reshape(anchors, [1, number_of_anchors, 3]) + keras.backend.cast(keras.backend.reshape(shifts, [k, 1, 3]), keras.backend.floatx())
+    shifted_anchors = keras.backend.reshape(shifted_anchors, [k * number_of_anchors, 3])
 
     return shifted_anchors
 
