@@ -1,2 +1,3 @@
-from ._smisc import RegressBoxes, UpsampleLike, Anchors, ClipBoxes, RegressLines,ClipLines  # noqa: F401
+from ._smisc import UpsampleLike, Anchors, RegressLines, ClipLines # noqa: F401
+from ._misc import RegressBoxes, ClipBoxes
 from .filter_detections import FilterDetections  # noqa: F401

@@ -291,8 +291,8 @@ def saffronnet_center_alpha(
     other = model.outputs[2:]
 
     # apply predicted regression to anchors
-    boxes = layers.RegressLines(name='lines')([anchors, regression])
-    boxes = layers.ClipLines(name='clipped_lines')([model.inputs[0], boxes])
+    lines = layers.RegressLines(name='lines')([anchors, regression])
+    lines = layers.ClipLines(name='clipped_lines')([model.inputs[0], boxes])
 
     # # filter detections (apply NMS / score threshold / select top-k)
     # detections = layers.FilterDetections(
@@ -306,4 +306,4 @@ def saffronnet_center_alpha(
     # )([boxes, classification] + other)
 
     # construct the model
-    return keras.models.Model(inputs=model.inputs, outputs=boxes, name=name)
+    return keras.models.Model(inputs=model.inputs, outputs=lines, name=name)
