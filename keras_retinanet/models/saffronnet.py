@@ -296,7 +296,7 @@ def saffronnet_center_alpha(
 
     # filter detections (apply NMS / score threshold / select top-k)
     detections = layers.FilterDetections(
-        nms                   = nms,
+        nms                   = False,
         class_specific_filter = class_specific_filter,
         name                  = 'filtered_detections',
         nms_threshold         = nms_threshold,

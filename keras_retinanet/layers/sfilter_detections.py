@@ -58,7 +58,7 @@ def filter_detections(
             filtered_scores = keras.backend.gather(scores, indices)[:, 0]
 
             # perform NMS
-            nms_indices = tensorflow.image.non_max_suppression(filtered_boxes, filtered_scores, max_output_size=max_detections, iou_threshold=nms_threshold)
+            nms_indices = tensorflow.image.non_max_suppression(filtered_lines, filtered_scores, max_output_size=max_detections, iou_threshold=nms_threshold)
 
             # filter indices based on NMS
             indices = keras.backend.gather(indices, nms_indices)
@@ -119,7 +119,7 @@ class FilterDetections(keras.layers.Layer):
 
     def __init__(
         self,
-        nms                   = True,
+        nms                   = False,
         class_specific_filter = True,
         nms_threshold         = 0.5,
         score_threshold       = 0.05,
