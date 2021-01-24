@@ -113,7 +113,7 @@ def default_regression_model(
     if keras.backend.image_data_format() == 'channels_first':
         inputs  = keras.layers.Input(shape=(backbone_feature_size, None, None), name='regression_input')
     else:
-        inputs  = keras.layers.Input(shape=(None, None, backbone_feature_size), gsname='regression_input')
+        inputs  = keras.layers.Input(shape=(None, None, backbone_feature_size), name='regression_input')
     outputs = inputs
     for i in range(4):
         outputs = keras.layers.Conv2D(
