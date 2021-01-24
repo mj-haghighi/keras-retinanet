@@ -128,7 +128,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
     return model, training_model #, prediction_model
 
 
-def create_callbacks(model, training_model, validation_generator, args):
+def create_callbacks(model, training_model,prediction_model, validation_generator, args):
     """ Creates the callbacks to use during training.
 
     Args
@@ -163,16 +163,16 @@ def create_callbacks(model, training_model, validation_generator, args):
             embeddings_metadata    = None
         )
 
-    # if args.evaluation and validation_generator:
-    #     if args.dataset_type == 'coco':
-    #         from ..callbacks.coco import CocoEval
+    if args.evaluation and validation_generator:
+        if args.dataset_type == 'coco':
+            from ..callbacks.coco import CocoEval
 
-    #         # use prediction model for evaluation
-    #         evaluation = CocoEval(validation_generator, tensorboard=tensorboard_callback)
-    #     else:
-    #         evaluation = Evaluate(validation_generator, tensorboard=tensorboard_callback, weighted_average=args.weighted_average)
-    #     evaluation = RedirectModel(evaluation, prediction_model)
-    #     callbacks.append(evaluation)
+            # use prediction model for evaluation
+            evaluation = CocoEval(validation_generator, tensorboard=tensorboard_callback)
+        else:
+            evaluation = Evaluate(validation_generator, tensorboard=tensorboard_callback, weighted_average=args.weighted_average)
+        evaluation = RedirectModel(evaluation, prediction_model)
+        callbacks.append(evaluation)
 
     # save the model
     if args.snapshots:
@@ -515,10 +515,8 @@ def main(args=None):
         pyramid_levels   = None
         if args.config and 'anchor_parameters' in args.config:
             anchor_params = parse_anchor_parameters(args.config)
-        if args.config and 'pyramid_levels' in args.config:
-            pyramid_levels = parse_pyramid_levels(args.config)
 
-        prediction_model = saffronnet_center_alpha(model=model, anchor_params=anchor_params, pyramid_levels=pyramid_levels)
+        prediction_model = saffronnet_center_alpha(model=model, anchor_params=anchor_params)
     else:
         weights = args.weights
         # default to imagenet if nothing else is specified
@@ -526,8 +524,8 @@ def main(args=None):
             weights = backbone.download_imagenet()
 
         print('Creating model, this may take a second...')
-        # model, training_model, prediction_model = create_models(
-        model, training_model = create_models(
+        model, training_model, prediction_model = create_models(
+        # model, training_model = create_models(
             backbone_retinanet=backbone.retinanet,
             num_classes=train_generator.num_classes(),
             weights=weights,
@@ -538,20 +536,19 @@ def main(args=None):
             config=args.config
         )
 
-    # print model summary
-    print(model.summary())
+    
 
     # this lets the generator compute backbone layer shapes using the actual backbone model
-    if 'vgg' in args.backbone or 'densenet' in args.backbone:
-        train_generator.compute_shapes = make_shapes_callback(model)
-        if validation_generator:
-            validation_generator.compute_shapes = train_generator.compute_shapes
+    # if 'vgg' in args.backbone or 'densenet' in args.backbone:
+    #     train_generator.compute_shapes = make_shapes_callback(model)
+    #     if validation_generator:
+    #         validation_generator.compute_shapes = train_generator.compute_shapes
 
     # create the callbacks
     callbacks = create_callbacks(
         model,
         training_model,
-        # prediction_model,
+        prediction_model,
         validation_generator,
         args,
     )
