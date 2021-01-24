@@ -114,7 +114,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
         training_model = model
 
     # make prediction model
-    # prediction_model = saffronnet_center_alpha(model=model, anchor_params=anchor_params)
+    prediction_model = saffronnet_center_alpha(model=model, anchor_params=anchor_params)
 
     # compile model
     training_model.compile(
@@ -125,7 +125,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
         optimizer=keras.optimizers.Adam(lr=lr, clipnorm=optimizer_clipnorm)
     )
 
-    return model, training_model #, prediction_model
+    return model, training_model , prediction_model
 
 
 def create_callbacks(model, training_model,prediction_model, validation_generator, args):
