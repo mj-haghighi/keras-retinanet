@@ -282,10 +282,10 @@ def saffronnet_center_alpha(
     regression_orginal = model.get_layer('regression').get_layer('regression_orginal')
     
     # we expect the anchors, regression and classification values as first output
-    regression     = model.get_layer('regression').get_layer('regression_reshape').output
-    classification = model.get_layer('classification').get_layer('classification_sigmoid').output
+    regression     = model.outputs[0]
+    classification = model.outputs[1]
 
-    anchors  = __build_anchors(anchor_params, on_layer=regression_orginal.output)
+    anchors  = __build_anchors(anchor_params, on_layer=regression_orginal)
 
     # "other" can be any additional output from custom submodels, by default this will be []
     other = model.outputs[2:]
