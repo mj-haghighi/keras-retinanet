@@ -48,9 +48,9 @@ def default_classification_model(
     }
 
     if keras.backend.image_data_format() == 'channels_first':
-        inputs  = keras.layers.Input(shape=(backbone_feature_size, None, None))
+        inputs  = keras.layers.Input(shape=(backbone_feature_size, None, None), name='classification_input')
     else:
-        inputs  = keras.layers.Input(shape=(None, None, backbone_feature_size))
+        inputs  = keras.layers.Input(shape=(None, None, backbone_feature_size), name='classification_input')
     outputs = inputs
     for i in range(4):
         outputs = keras.layers.Conv2D(
