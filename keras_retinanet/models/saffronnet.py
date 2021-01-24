@@ -297,7 +297,7 @@ def saffronnet_center_alpha(
 
     # apply predicted regression to anchors
     lines = layers.RegressLines(name='lines')([anchors, regression])
-    lines = layers.ClipLines(name='clipped_lines')([model.inputs[0], lines])
+    lines1 = layers.ClipLines(name='clipped_lines')([model.inputs[0], lines])
     # filter detections (apply NMS / score threshold / select top-k)
     detections = layers.FilterDetections(
         nms                   = False,
@@ -307,7 +307,7 @@ def saffronnet_center_alpha(
         score_threshold       = score_threshold,
         max_detections        = max_detections,
         parallel_iterations   = parallel_iterations
-    )([lines, classification] + other)
+    )([lines1, classification] + other)
 
     prediction_model = keras.models.Model(inputs=model.inputs, outputs=detections, name=name) 
     print(prediction_model.summary())
