@@ -286,6 +286,7 @@ def saffronnet_center_alpha(
     classification = model.outputs[1]
 
     anchors  = __build_anchors(anchor_params, on_layer=regression_orginal.output)
+    print('anchors: ', anchors)
 
     # "other" can be any additional output from custom submodels, by default this will be []
     other = model.outputs[2:]
@@ -293,7 +294,6 @@ def saffronnet_center_alpha(
     # apply predicted regression to anchors
     lines = layers.RegressLines(name='lines')([anchors, regression])
     lines = layers.ClipLines(name='clipped_lines')([model.inputs[0], lines])
-
     # filter detections (apply NMS / score threshold / select top-k)
     detections = layers.FilterDetections(
         nms                   = False,
