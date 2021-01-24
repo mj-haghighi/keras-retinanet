@@ -21,7 +21,7 @@ from ..utils.image import read_image_bgr
 import numpy as np
 from PIL import Image
 from six import raise_from
-
+import warnings
 import csv
 import sys
 import os.path
