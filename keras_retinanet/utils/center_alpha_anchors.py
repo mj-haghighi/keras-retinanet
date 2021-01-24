@@ -118,15 +118,16 @@ def distance(x, y, ox, oy):
 def compute_overlap(anchors, annotations, max_d = 5, max_d_alpha = 22.5):
     """ compute overlaps
     """
+    print('anchors: ', anchors)
     base = math.pi / 180
     max_d_alpha_in_doubt = 1 - math.cos(2*max_d_alpha * base)
     max_d_alpha = 1 - math.cos(max_d_alpha * base) # normalized
     N = anchors.shape[0]
     K = annotations.shape[0]
     overlaps = np.zeros((N, K), dtype=np.float64)
-    for anchor, n in enumerate(anchors):
+    for n, anchor in enumerate(anchors):
         x_anchor, y_anchor, alpha_anchor = anchor
-        for anot, k in enumerate(annotations):
+        for k, anot in enumerate(annotations):
             x_anot, y_anot, alpha_anot = anot
             d = distance(x_anchor, y_anchor, x_anot, y_anot)
             d_alpha = 1 - math.cos((alpha_anchor - alpha_anot) * base) # normalized [0, 2]
