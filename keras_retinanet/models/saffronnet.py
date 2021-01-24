@@ -224,7 +224,7 @@ def saffronnet(
         regression = submodels['regression'](backbone_output)
         classification = submodels['classification'](backbone_output) 
 
-    return keras.models.Model(inputs=inputs, outputs=[regression.output, classification.output], name=name)
+    return keras.models.Model(inputs=inputs, outputs=[regression, classification], name=name)
 
 
 def saffronnet_center_alpha(
