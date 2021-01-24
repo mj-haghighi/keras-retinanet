@@ -104,7 +104,7 @@ def filter_detections(
     other_   = [tensorflow.pad(o, [[0, pad_size]] + [[0, 0] for _ in range(1, len(o.shape))], constant_values=-1) for o in other_]
 
     # set shapes, since we know what they are
-    lines.set_shape([max_detections, 4])
+    lines.set_shape([max_detections, 3])
     scores.set_shape([max_detections])
     labels.set_shape([max_detections])
     for o, s in zip(other_, [list(keras.backend.int_shape(o)) for o in other]):
