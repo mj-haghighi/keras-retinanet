@@ -224,7 +224,7 @@ def saffronnet(
         regression = submodels['regression'](backbone_output)
         classification = submodels['classification'](backbone_output) 
 
-    return keras.models.Model(inputs=inputs, outputs=[regression, classification], name=name)
+    return keras.models.Model(inputs=inputs, outputs=[regression.outputs, classification.outputs], name=name)
 
 
 def saffronnet_center_alpha(
@@ -275,9 +275,9 @@ def saffronnet_center_alpha(
     # create RetinaNet model
     if model is None:    
         model = saffronnet(num_anchors=anchor_params.num_anchors(), **kwargs)
-        print(model.summary())
     else:
         assert_training_model(model)
+    print(model.summary())
 
     # last layer of regression submodel before Reshape
     regression_orginal = model.get_layer('regression').get_layer('regression_orginal')
