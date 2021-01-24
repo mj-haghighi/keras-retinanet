@@ -128,7 +128,7 @@ def create_models(backbone_retinanet, num_classes, weights, multi_gpu=0,
     return model, training_model #, prediction_model
 
 
-def create_callbacks(model, training_model, prediction_model=None, validation_generator=None, args=None):
+def create_callbacks(model, training_model, validation_generator, args):
     """ Creates the callbacks to use during training.
 
     Args
