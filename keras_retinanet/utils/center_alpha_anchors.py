@@ -249,7 +249,7 @@ def anchors_for_shape(
     if anchor_params is None:
         anchor_params = AnchorParameters.default
 
-    if shapes_callback is None:
+    if True:# shapes_callback is None:
         shapes_callback = guess_shapes
     image_shapes = shapes_callback(image_shape) #, fraction_factor=8)
 
