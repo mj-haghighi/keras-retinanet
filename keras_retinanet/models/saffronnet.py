@@ -285,7 +285,7 @@ def saffronnet_center_alpha(
     # we expect the anchors, regression and classification values as first output
     regression     = model.outputs[0]
     classification = model.outputs[1]
-    print('regression: ', regression)
+    print('regression: ', regression.outputs)
     anchors  = __build_anchors(anchor_params, on_layer=regression_orginal.output)
 
     # "other" can be any additional output from custom submodels, by default this will be []
@@ -305,7 +305,6 @@ def saffronnet_center_alpha(
         parallel_iterations   = parallel_iterations
     )([lines, classification] + other)
 
-    print(model.inputs)
     prediction_model = keras.models.Model(inputs=model.inputs, outputs=detections, name=name) 
     print(prediction_model.summary())
     
