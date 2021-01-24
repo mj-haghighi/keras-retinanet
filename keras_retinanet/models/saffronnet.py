@@ -285,32 +285,32 @@ def saffronnet_center_alpha(
     regression     = model.outputs[0]
     classification = model.outputs[1]
 
-    anchors  = __build_anchors(anchor_params, on_layer=regression_orginal)
+    anchors  = __build_anchors(anchor_params, on_layer=regression_orginal.output)
 
     # "other" can be any additional output from custom submodels, by default this will be []
     other = model.outputs[2:]
 
     # apply predicted regression to anchors
-    lines = layers.RegressLines(name='lines')([anchors, regression, classification])
+    lines = layers.RegressLines(name='lines')([anchors, regression])
     # lines = layers.ClipLines(name='clipped_lines')([model.inputs[0], lines])
 
-    # # filter detections (apply NMS / score threshold / select top-k)
-    # detections = layers.FilterDetections(
-    #     nms                   = nms,
-    #     class_specific_filter = class_specific_filter,
-    #     name                  = 'filtered_detections',
-    #     nms_threshold         = nms_threshold,
-    #     score_threshold       = score_threshold,
-    #     max_detections        = max_detections,
-    #     parallel_iterations   = parallel_iterations
-    # )([boxes, classification] + other)
+    # filter detections (apply NMS / score threshold / select top-k)
+    detections = layers.FilterDetections(
+        nms                   = nms,
+        class_specific_filter = class_specific_filter,
+        name                  = 'filtered_detections',
+        nms_threshold         = nms_threshold,
+        score_threshold       = score_threshold,
+        max_detections        = max_detections,
+        parallel_iterations   = parallel_iterations
+    )([lines, classification] + other)
 
     # construct the model
 
-    keras.utils.plot_model(model, to_file='model.png')
+    keras.utils.plot_model(model)
     print(model.summary())
     print(model.inputs)
-    prediction_model = keras.models.Model(inputs=model.inputs, outputs=lines, name=name) 
+    prediction_model = keras.models.Model(inputs=model.inputs, outputs=detections, name=name) 
     print(prediction_model.summary())
     keras.utils.plot_model(prediction_model, to_file='prediction_model.png')
     
