@@ -273,8 +273,9 @@ def saffronnet_center_alpha(
         anchor_params = AnchorParameters.default
 
     # create RetinaNet model
-    if model is None:
+    if model is None:    
         model = saffronnet(num_anchors=anchor_params.num_anchors(), **kwargs)
+        print(model.summary())
     else:
         assert_training_model(model)
 
@@ -284,9 +285,8 @@ def saffronnet_center_alpha(
     # we expect the anchors, regression and classification values as first output
     regression     = model.outputs[0]
     classification = model.outputs[1]
-
+    print('regression: ', regression)
     anchors  = __build_anchors(anchor_params, on_layer=regression_orginal.output)
-    print('anchors: ', anchors)
 
     # "other" can be any additional output from custom submodels, by default this will be []
     other = model.outputs[2:]
@@ -305,13 +305,8 @@ def saffronnet_center_alpha(
         parallel_iterations   = parallel_iterations
     )([lines, classification] + other)
 
-    # construct the model
-
-    keras.utils.plot_model(model)
-    print(model.summary())
     print(model.inputs)
     prediction_model = keras.models.Model(inputs=model.inputs, outputs=detections, name=name) 
     print(prediction_model.summary())
-    keras.utils.plot_model(prediction_model, to_file='prediction_model.png')
     
     return prediction_model
