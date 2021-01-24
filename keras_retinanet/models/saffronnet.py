@@ -308,7 +308,10 @@ def saffronnet_center_alpha(
     # construct the model
 
     keras.utils.plot_model(model, to_file='model.png')
-    prediction_model = keras.models.Model(inputs=model.inputs, outputs=lines, name=name) 
+    print(model.summary())
+    print(model.inputs)
+    prediction_model = keras.models.Model(inputs=model.inputs, outputs=lines.output, name=name) 
+    print(prediction_model.summary())
     keras.utils.plot_model(prediction_model, to_file='prediction_model.png')
     
     return prediction_model
