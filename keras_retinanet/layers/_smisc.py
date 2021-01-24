@@ -134,7 +134,7 @@ class RegressLines(keras.layers.Layer):
         super(RegressLines, self).__init__(*args, **kwargs)
 
     def call(self, inputs, **kwargs):
-        anchors, regression = inputs
+        anchors, regression, classification = inputs
         return backend.center_alpha_transform_inv(anchors, regression, mean=self.mean, std=self.std)
 
     def compute_output_shape(self, input_shape):

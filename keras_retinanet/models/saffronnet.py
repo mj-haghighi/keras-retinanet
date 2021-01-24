@@ -291,7 +291,7 @@ def saffronnet_center_alpha(
     other = model.outputs[2:]
 
     # apply predicted regression to anchors
-    lines = layers.RegressLines(name='lines')([anchors, regression])
+    lines = layers.RegressLines(name='lines')([anchors, regression, classification])
     # lines = layers.ClipLines(name='clipped_lines')([model.inputs[0], lines])
 
     # # filter detections (apply NMS / score threshold / select top-k)
