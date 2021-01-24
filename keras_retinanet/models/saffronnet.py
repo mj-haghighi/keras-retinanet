@@ -282,7 +282,7 @@ def saffronnet_center_alpha(
     regression_orginal = model.get_layer('regression').get_layer('regression_orginal')
     
     # we expect the anchors, regression and classification values as first output
-    regression     = model.outputs[0],output
+    regression     = model.outputs[0].output
     classification = model.outputs[1].output
 
     anchors  = __build_anchors(anchor_params, on_layer=regression_orginal.output)
