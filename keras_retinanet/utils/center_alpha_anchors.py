@@ -118,7 +118,6 @@ def distance(x, y, ox, oy):
 def compute_overlap(anchors, annotations, max_d = 5, max_d_alpha = 22.5):
     """ compute overlaps
     """
-    print('anchors: ', anchors)
     base = math.pi / 180
     max_d_alpha_in_doubt = 1 - math.cos(2*max_d_alpha * base)
     max_d_alpha = 1 - math.cos(max_d_alpha * base) # normalized
