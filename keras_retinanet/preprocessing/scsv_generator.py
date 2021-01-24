@@ -69,7 +69,7 @@ def _read_annotations(csv_reader, classes):
         line += 1
 
         try:
-            img_file, y, x, alpha, class_name = row[:5]
+            img_file, x, y, alpha, class_name = row[:5]
         except ValueError:
             raise_from(ValueError('line {}: format should be \'img_file,x,y,alpha,class_name\' or \'img_file,,,,\''.format(line)), None)
 
