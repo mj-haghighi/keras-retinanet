@@ -309,7 +309,7 @@ def saffronnet_center_alpha(
         parallel_iterations   = parallel_iterations
     )([lines1, classification] + other)
 
-    prediction_model = keras.models.Model(inputs=model.inputs, outputs=detections, name=name) 
+    prediction_model = keras.models.Model(inputs=model.inputs, outputs=[regression, classification], name=name) 
     print(prediction_model.summary())
     
     return prediction_model
